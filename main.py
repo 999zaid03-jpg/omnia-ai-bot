@@ -1,6 +1,5 @@
 import os
 import logging
-import asyncio
 from threading import Thread
 from flask import Flask
 from telegram import Update
@@ -24,22 +23,15 @@ def keep_alive():
     t.start()
 # -------------------------
 
-# Render ရဲ့ Environment Variables ကနေပဲ အသေအချာဖတ်ခိုင်းမယ်
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 GEMINI_KEY = os.getenv("GEMINI_KEY")
 
-# Gemini API ပြင်ဆင်ခြင်း
+# Gemini Standard Configuration
 genai.configure(api_key=GEMINI_KEY)
-
-# ဗားရှင်းဟောင်းတွေမှာပါ အလုပ်လုပ်အောင် မော်ဒယ်နာမည်ကို 'gemini-pro' လို့ ပြောင်းသုံးကြည့်ပါမယ်
-try:
-    model = genai.GenerativeModel(
-        model_name="gemini-pro",
-        system_instruction="You are OmniaCapital AI, a professional assistant for OmniaCapital Group. Answer user questions in a helpful and polite manner in both English and Burmese. Focus on financial and investment topics related to the group."
-    )
-except Exception:
-    # အကယ်၍ system_instruction နဲ့ မကိုက်ညီရင် ရိုးရိုးပဲ ဆောက်မယ်
-    model = genai.GenerativeModel(model_name="gemini-pro")
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    system_instruction="You are OmniaCapital AI, a professional assistant for OmniaCapital Group. Answer user questions in a helpful and polite manner in both English and Burmese. Focus on financial and investment topics related to the group."
+)
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 
