@@ -7,7 +7,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 import google.generativeai as genai
 
-# --- Render Web Server (Port open စစ်ဆေးတာ ကျော်ဖြတ်ဖို့) ---
+# --- Render Web Server (Port Open) ---
 flask_app = Flask('')
 
 @flask_app.route('/')
@@ -22,13 +22,13 @@ def keep_alive():
     t = Thread(target=run_flask)
     t.daemon = True
     t.start()
-# -------------------------------------------------------------
+# -------------------------------------
 
-# Environment Variables ကနေ လှမ်းဖတ်မယ် (Render မှာ ထည့်ခဲ့တဲ့ Key တွေပါ)
-TOKEN = os.getenv("TELEGRAM_TOKEN")
-GEMINI_KEY = os.getenv("GEMINI_KEY")
+# Environment Variables ကနေ တိုက်ရိုက်ဖတ်မယ်
+TOKEN = os.getenv("TELEGRAM_TOKEN", "8980631594:AAFwxbnJtA3HYGEiVVwSy--nWOx1NZD3usw")
+GEMINI_KEY = os.getenv("GEMINI_KEY", "AIzaSyCmUzL-uTfv7Q3b66I-F9O0hsNC4toE7ZY")
 
-# Gemini Setup
+# Gemini Setup (Unicode စနစ်မှန်ဖြင့် ပြင်ဆင်ထားသည်)
 genai.configure(api_key=GEMINI_KEY)
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
@@ -38,21 +38,22 @@ model = genai.GenerativeModel(
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("OmniaCapital Group BM rkiqsoptw,f/ wefawmfka AI assistant play/ bmrsm; wepday;rav;cifAsm?")
+    # စာသားကို ယူနီကုတ် စနစ်အမှန်ဖြင့် ပြန်ပြင်ထားပါတယ်
+    await update.message.reply_text("OmniaCapital Group မှ ကြိုဆိုပါတယ်။ ကျွန်တော်က AI Assistant ပါဗျာ။ ဘာများ ကူညီပေးရမလဲခင်ဗျာ?")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
+        # AI ထံမှ အဖြေတောင်းခြင်း
         response = model.generate_content(update.message.text)
         await update.message.reply_text(response.text)
     except Exception as e:
         logging.error(f"Error handling message: {e}")
-        await update.message.reply_text("ခေတ္တဆိုင်းငံ့ထားပါ၊ ခဏနေမှ ပြန်မေးပေးပါခင်ဗျာ။")
+        # တကယ့် Error အစစ်ကိုပါ Bot ထဲမှာ လှမ်းပြခိုင်းလိုက်မယ် (ရှာရလွယ်အောင်)
+        await update.message.reply_text(f"စနစ်ပိုင်းဆိုင်ရာ ချို့ယွင်းချက်ရှိနေပါသည်။\nError: {e}")
 
 def main():
-    # Web Server ကို နောက်ကွယ်ကနေ အရင်နိုးမယ်
     keep_alive()
 
-    # Telegram Bot ကို ရေးထုံးအမှန်အတိုင်း တည်ဆောက်မယ်
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
