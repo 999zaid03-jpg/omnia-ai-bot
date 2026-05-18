@@ -24,22 +24,14 @@ def keep_alive():
     t.start()
 # -------------------------
 
-# Render ရဲ့ Environment Variables ကနေပဲ အသေအချာဖတ်ခိုင်းမယ်
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 GEMINI_KEY = os.getenv("GEMINI_KEY")
 
-# Gemini API ပြင်ဆင်ခြင်း
+# Gemini API တည်ဆောက်ခြင်း
 genai.configure(api_key=GEMINI_KEY)
 
-# ဗားရှင်းဟောင်းတွေမှာပါ အလုပ်လုပ်အောင် မော်ဒယ်နာမည်ကို 'gemini-pro' လို့ ပြောင်းသုံးကြည့်ပါမယ်
-try:
-    model = genai.GenerativeModel(
-        model_name="gemini-pro",
-        system_instruction="You are OmniaCapital AI, a professional assistant for OmniaCapital Group. Answer user questions in a helpful and polite manner in both English and Burmese. Focus on financial and investment topics related to the group."
-    )
-except Exception:
-    # အကယ်၍ system_instruction နဲ့ မကိုက်ညီရင် ရိုးရိုးပဲ ဆောက်မယ်
-    model = genai.GenerativeModel(model_name="gemini-pro")
+# ဗားရှင်းအဟောင်းတွေရဲ့ စာကြည့်တိုက် (v1beta2) ပါ သိအောင် တိုက်ရိုက်ပုံစံ ပြောင်းရေးထားပါတယ်
+model = genai.GenerativeModel('models/gemini-pro')
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 
@@ -48,6 +40,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
+        # ဗားရှင်းအဟောင်းရော အသစ်ပါ အလုပ်လုပ်တဲ့ Content Generation စနစ်
         response = model.generate_content(update.message.text)
         await update.message.reply_text(response.text)
     except Exception as e:
