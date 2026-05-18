@@ -26,12 +26,11 @@ def keep_alive():
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 GEMINI_KEY = os.getenv("GEMINI_KEY")
 
-# Gemini Standard Configuration
+# Gemini Setup
 genai.configure(api_key=GEMINI_KEY)
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    system_instruction="You are OmniaCapital AI, a professional assistant for OmniaCapital Group. Answer user questions in a helpful and polite manner in both English and Burmese. Focus on financial and investment topics related to the group."
-)
+
+# ဗားရှင်းအဟောင်းရော အသစ်ပါ ၁၀၀% သိတဲ့ gemini-pro ကို အသုံးပြုထားပါတယ်
+model = genai.GenerativeModel(model_name="gemini-pro")
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 
